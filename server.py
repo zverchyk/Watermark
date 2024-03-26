@@ -1,4 +1,4 @@
-from flask import Flask, url_for, render_template, redirect,json, request, send_file, session
+from flask import Flask, url_for, render_template, redirect,json, request, send_file, session, jsonify
 import os
 from watermark import Watermark
 import tempfile
@@ -58,8 +58,8 @@ def edit():
     if request.method == "POST":
         print('helo')
         data = request.get_json()
-        print("ddd", data["watermark_pos"])
         print(data)
+        return jsonify(data)
     return render_template('edit.html', data = json.dumps(data))
 
 if __name__ == "__main__":

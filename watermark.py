@@ -3,26 +3,35 @@ from PIL import Image, ImageOps
 
 class Watermark():
     
-    def merge_with_transparency(self,background_image_path, transparent_image_path, position):
-        with Image.open(transparent_image_path) as img:
-            ImageOps.cover(img, (250, 250)).save(transparent_image_path)
+    def merge_with_transparency(self,background_image_path, watermark_path, position, **kwargs):
+        with Image.open(watermark_path) as img:
+            ImageOps.cover(img, (250, 250)).save(watermark_path)
         # Open the background and transparent images
         background = Image.open(background_image_path).convert("RGBA")
-        transparent_image = Image.open(transparent_image_path).convert("RGBA")
+        watermark = Image.open(watermark_path).convert("RGBA")
     
         # Create a new blank image with the same size as the background
         merged_image = Image.new("RGBA", background.size)
-
+        try:
+            
+            watermark_width = kwargs.get('width', watermark.width)
+            watermark_height= kwargs.get('height', watermark.width)
+            
+            resized_watermark = watermark.resize((watermark_width, watermark_height))
+        except TypeError:
+            pass
+        else:
+            watermark = resized_watermark
         # Paste the background image onto the blank image
         merged_image.paste(background, (0,0))
         # Paste the transparent image onto the merged image at the specified position
         # The transparent image itself is used as the mask to maintain its transparency
-        merged_image.paste(transparent_image, position, mask=transparent_image)
+        merged_image.paste(watermark, position, mask=watermark)
 
         return merged_image
     
     def get_result(self, image, watermark, side):
-        result = self.merge_with_transparency(image, watermark, side)
+        result = self.merge_with_transparency(image, watermark, side, width = None, height = None)
         result.save('result/result.png', "PNG")
         return 'result/result.png'
 

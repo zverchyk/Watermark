@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document; // Using document as the container for simplicity, adjust as needed
     
     let initialDistance = null;
-    let scale = 1; // Initial scale for pinch-to-zoom
+    window.scale = 1; // Initial scale for pinch-to-zoom
     let isDragging = false; // Track if we are in drag mode
 
     // Function to calculate the distance between two touch points for pinch-to-zoom
@@ -47,71 +47,71 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add drag functionality
-    function makeDraggable(dragTarget) {
-        let startX, startY, offsetX, offsetY, isDragging = false;
-    
-        function startDrag(e) {
-            // Prevent initiating drag if we are scaling or if more than one touch is detected
-            if (e.touches && e.touches.length > 1) return;
-    
-            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    
-            // Get the initial position of the dragTarget relative to the viewport
-            const rect = dragTarget.getBoundingClientRect();
-            startX = clientX;
-            startY = clientY;
-    
-            // Calculate the offset from the cursor/finger to the top-left corner of the dragTarget
-            offsetX = clientX - rect.left;
-            offsetY = clientY - rect.top;
-    
-            // Attach event listeners for moving and stopping the drag
-            document.addEventListener('mousemove', onDrag, {passive: false});
-            document.addEventListener('mouseup', stopDrag);
-            document.addEventListener('touchmove', onDrag, {passive: false});
-            document.addEventListener('touchend', stopDrag);
-    
-            isDragging = true;
-            e.preventDefault(); // Prevent text selection or other default actions
-        }
-    
-        function onDrag(e) {
-            if (!isDragging) return;
-    
-            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    
-            // Include page scroll offsets in the calculation for absolute positioning relative to the document
-            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    
-            // Use startX/Y, offsetX/Y to maintain the initial offset between the touch point and the element's original position
-            const newX = clientX - offsetX + scrollX;
-            const newY = clientY - offsetY + scrollY;
-    
-            // Apply the calculated position
-            dragTarget.style.position = 'absolute'; // Ensure the position is absolute
-            dragTarget.style.left = newX + 'px';
-            dragTarget.style.top = newY + 'px';
-    
-            e.preventDefault(); // This line is optional, based on whether you need to prevent default behavior during drag
-        }
-    
-        function stopDrag() {
-            document.removeEventListener('mousemove', onDrag);
-            document.removeEventListener('mouseup', stopDrag);
-            document.removeEventListener('touchmove', onDrag);
-            document.removeEventListener('touchend', stopDrag);
-    
-            isDragging = false;
-        }
-    
-        // Attach the initial listener for both mouse and touch start
-        dragTarget.addEventListener('mousedown', startDrag);
-        dragTarget.addEventListener('touchstart', startDrag);
+function makeDraggable(dragTarget) {
+    let startX, startY, offsetX, offsetY, isDragging = false;
+
+    function startDrag(e) {
+        // Prevent initiating drag if we are scaling or if more than one touch is detected
+        if (e.touches && e.touches.length > 1) return;
+
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+        // Get the initial position of the dragTarget relative to the viewport
+        const rect = dragTarget.getBoundingClientRect();
+        startX = clientX;
+        startY = clientY;
+
+        // Calculate the offset from the cursor/finger to the top-left corner of the dragTarget
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+
+        // Attach event listeners for moving and stopping the drag
+        document.addEventListener('mousemove', onDrag, {passive: false});
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchmove', onDrag, {passive: false});
+        document.addEventListener('touchend', stopDrag);
+
+        isDragging = true;
+        e.preventDefault(); // Prevent text selection or other default actions
     }
-    
+
+    function onDrag(e) {
+        if (!isDragging) return;
+
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+        // Include page scroll offsets in the calculation for absolute positioning relative to the document
+        const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Use startX/Y, offsetX/Y to maintain the initial offset between the touch point and the element's original position
+        const newX = clientX - offsetX + scrollX;
+        const newY = clientY - offsetY + scrollY;
+
+        // Apply the calculated position
+        dragTarget.style.position = 'absolute'; // Ensure the position is absolute
+        dragTarget.style.left = newX + 'px';
+        dragTarget.style.top = newY + 'px';
+
+        e.preventDefault(); // This line is optional, based on whether you need to prevent default behavior during drag
+    }
+
+    function stopDrag() {
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', onDrag);
+        document.removeEventListener('touchend', stopDrag);
+
+        isDragging = false;
+    }
+
+    // Attach the initial listener for both mouse and touch start
+    dragTarget.addEventListener('mousedown', startDrag);
+    dragTarget.addEventListener('touchstart', startDrag);
+}
+
 
     // Initialize draggable functionality
     makeDraggable(watermark);
@@ -162,6 +162,7 @@ document.getElementById('get-position-btn').addEventListener('click', function c
         body: JSON.stringify({
             watermark_pos: position,
             text_pos: text_position,
+            size: scale,
         })
         
     })
