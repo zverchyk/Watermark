@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/edit.css">
+    <title>edit</title>
+</head>
+<body>
+    <div id="image-container" style="position: relative; width: fit-content;">
+        <img id="main-image" src="{{ url_for('static', filename='test_files/1.webp') }}" alt="Main Image">
+        <img id="image-watermark" src="{{ url_for('static', filename='test_files/black.png') }}" style="position: absolute; top: 10px; left: 10px; opacity: 1; width: 100px; height: 100px;" alt="Watermark">
+        <p id="text-watermark" style="color:green; font-size: 25px;">Hello it's me</p>
+
+    </div>
+    <button onclick="selectTarget('image-watermark')">Manipulate Image</button>
+    <button onclick="selectTarget('text-watermark')">Manipulate Text</button>
+    <button id="get-position-btn" >Get Watermark Position</button>
+    <span id="num"></span><br>
+    <span id="tnum"></span><br>
+    <p>{{data|safe}}</p>
+    <script src="/static/js/edit.js"></script>
+</body>
+</html>

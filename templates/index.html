@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Add watermark to your picture!</h2>
+        <form method="post" enctype="multipart/form-data">
+            <div class="upload-btn-wrapper">
+                <button type="button">Choose a picture</button>
+                <input type="file" name="picture" id="picture"/>
+                <span id="pic-name">No file selected</span>
+                <img id="pic-preview" src="" alt="Picture preview" style="width: 200px;display: none; "><br><br>
+    
+            </div>
+            <div class="upload-btn-wrapper">
+                <button type="button">Choose a watermark</button>
+                <input type="file" name="watermark" id="watermark"/>
+                <span id="water-name">No file selected</span>
+                <img id='water-preview' src="" alt="Picture preview" style="width: 200px;display: none; "><br><br>
+            </div>
+            <br>
+            <button type="submit">Upload</button>
+        </form>
+        {%if result%}
+        <a href="{{url_for('download_image')}}" class="button">download_image</a>
+        {%endif%}
+        <a href="{{url_for('edit')}}" class="button">edit</a>
+    </div>
+
+    
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
