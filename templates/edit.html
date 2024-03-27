@@ -9,7 +9,26 @@
 <body>
     <div id="image-container" style="position: relative; width: fit-content;">
         <img id="main-image" src="{{ url_for('static', filename='test_files/1.webp') }}" alt="Main Image">
-        <img id="image-watermark" src="{{ url_for('static', filename='test_files/black.png') }}" style="position: absolute; top: 10px; left: 10px; opacity: 1; width: 100px; height: 100px;" alt="Watermark">
+        <div id="image-watermark" style="position: absolute; top: 50%; left:50%; opacity: 1; width: 100px; height: 100px;">
+            <img id="image-watermark-inner" src="{{ url_for('static', filename='test_files/black.png') }}" style="width: 100%; height: 100%;" alt="Watermark">
+        
+            <!-- <div id="scale-handle" style="position: absolute; bottom: 0; right: 0; width: 100%; height: 100%; background: transparent; cursor: nwse-resize; border-width: 50px; border-color: blue;"></div> -->
+              <!-- The scaling frame -->
+            <div id="scaling-frame" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid blue;">
+            <!-- Scaling handles -->
+            <div class="scale-handle" id="scale-top-left" style="position: absolute; top: -5px; left: -5px; width: 10px; height: 10px; background-color: blue; cursor: nw-resize;"></div>
+            <div class="scale-handle" id="scale-top-right" style="position: absolute; top: -5px; right: -5px; width: 10px; height: 10px; background-color: blue; cursor: ne-resize;"></div>
+            <div class="scale-handle" id="scale-bottom-left" style="position: absolute; bottom: -5px; left: -5px; width: 10px; height: 10px; background-color: blue; cursor: sw-resize;"></div>
+            <div class="scale-handle" id="scale-bottom-right" style="position: absolute; bottom: -5px; right: -5px; width: 10px; height: 10px; background-color: blue; cursor: se-resize;"></div>
+            <!--corners  -->
+            <div class="scale-handle" id="scale-bottom" style="position: absolute; bottom: -5px; right: 45%; width: 10px; height: 10px; background-color: blue; cursor: s-resize;"></div>
+            <div class="scale-handle" id="scale-right" style="position: absolute; bottom: 45%; right: -5px; width: 10px; height: 10px; background-color: blue; cursor: w-resize;"></div>
+            <div class="scale-handle" id="scale-top" style="position: absolute; top: -5px; right: 45%; width: 10px; height: 10px; background-color: blue; cursor: n-resize;"></div>
+            <div class="scale-handle" id="scale-left" style="position: absolute; bottom: 45%; left: -5px; width: 10px; height: 10px; background-color: blue; cursor: e-resize;"></div>
+        </div>
+        </div>
+        
+        
         <p id="text-watermark" style="color:green; font-size: 25px;">Hello it's me</p>
 
     </div>

@@ -42,3 +42,46 @@ body{
 
 button { border: 2px solid gray; color: gray; background-color: white; padding: 8px 20px; border-radius: 8px; font-size: 20px; font-weight: bold;
     width: 300px; }
+
+      
+
+#scaling-frame {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+border: 5px solid blue;
+}
+
+.scale-handle {
+position: absolute;
+width: 10px;
+height: 10px;
+background-color: blue;
+}
+
+#scale-top-left {
+top: -5px;
+left: -5px;
+cursor: nw-resize;
+}
+
+#scale-top-right {
+top: -5px;
+right: -5px;
+cursor: ne-resize;
+}
+
+#scale-bottom-left {
+bottom: -5px;
+left: -5px;
+cursor: sw-resize;
+}
+
+#scale-bottom-right {
+bottom: -5px;
+right: -5px;
+cursor: se-resize;
+}
+      
