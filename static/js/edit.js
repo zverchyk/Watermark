@@ -8,43 +8,7 @@ function getWatermarkPosition(watermark, container) {
         y: watermarkRect.top - containerRect.top
     };
 }
-// SENDS DATA TO SERVER
-document.getElementById('get-position-btn').addEventListener('click', function clickEventHandler() {
-    var mainImage = document.getElementById('main-image');
-    var imageWatermark = document.getElementById('image-watermark'); 
-    var textWatermark = document.getElementById('text-watermark')// Or textWatermark for the <p> element
-    var position = getWatermarkPosition(imageWatermark, mainImage);
-    position.x = Math.floor(position.x);
-    position.y = Math.floor(position.y);
-    var text_position = getWatermarkPosition(textWatermark, mainImage);
-    console.log('Watermark Position:', position);
-    document.getElementById('num').textContent = 'watermark position ' + ' x ' + position.x + ' y ' +position.y;
-    document.getElementById('tnum').textContent = 'text '+ 'x '+ text_position.x + ' y '+ text_position.y
-    fetch('/edit', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            watermark_pos: position,
-            text_pos: text_position,
-            size: scale,
-        })
-        
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json(); // Process the response if it's in JSON format
-    })
-    .then(data => {
-        console.log(data); // Handle the data from the response
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-    });
-});
+
 
 // MOVE AND SCALE WITH TOUCH
 
@@ -281,21 +245,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
-
+            let width = Math.max(10, startWidth - dx);
+            let height = Math.max(10, startHeight - dy);
+            window.width
+            window.heiht
             switch(handleId) {
                 case 'scale-top-left':
-                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
-                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
+                    watermark.style.width = `${width}px`;
+                    watermark.style.height = `${height}px`;
                     watermark.style.left = `${startLeft + dx}px`;
                     watermark.style.top = `${startTop + dy}px`;
                     break;
                 case 'scale-top':
-                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
+                    watermark.style.height = `${height}px`;
                     watermark.style.top = `${startTop + dy}px`;
                     break;
                 case 'scale-top-right':
                     watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
-                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
+                    watermark.style.height = `${height}px`;
                     watermark.style.top = `${startTop + dy}px`;
                     break;
                 case 'scale-right':
@@ -309,12 +276,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
                     break;
                 case 'scale-bottom-left':
-                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
+                    watermark.style.width = `${width}px`;
                     watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
                     watermark.style.left = `${startLeft + dx}px`;
                     break;
                 case 'scale-left':
-                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
+                    watermark.style.width = `${width}px`;
                     watermark.style.left = `${startLeft + dx}px`;
                     break;
             }
@@ -334,3 +301,41 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// SENDS DATA TO SERVER
+document.getElementById('get-position-btn').addEventListener('click', function clickEventHandler() {
+    var mainImage = document.getElementById('main-image');
+    var imageWatermark = document.getElementById('image-watermark'); 
+    var textWatermark = document.getElementById('text-watermark')// Or textWatermark for the <p> element
+    var position = getWatermarkPosition(imageWatermark, mainImage);
+    position.x = Math.floor(position.x);
+    position.y = Math.floor(position.y);
+    var text_position = getWatermarkPosition(textWatermark, mainImage);
+    console.log('Watermark Position:', position);
+    document.getElementById('num').textContent = 'watermark position ' + ' x ' + position.x + ' y ' +position.y;
+    document.getElementById('tnum').textContent = 'text '+ 'x '+ text_position.x + ' y '+ text_position.y
+    fetch('/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            watermark_pos: position,
+            text_pos: text_position,
+            size: scale,
+a
+        })
+        
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // Process the response if it's in JSON format
+    })
+    .then(data => {
+        console.log(data); // Handle the data from the response
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+});
