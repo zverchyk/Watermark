@@ -7,7 +7,7 @@ add_watermark = Watermark()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'SECRET_KEY'
-f
+
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     result = session.get('result', False)
@@ -22,8 +22,6 @@ def upload_file():
         position = (data['watermark_pos']["x"], data['watermark_pos']["y"])
         width = data["width_w"][:-2]
         height = data["height_w"][:-2]
-        print("hekoo")
-        print(height)
         
         
         
