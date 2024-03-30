@@ -7,7 +7,7 @@ add_watermark = Watermark()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'SECRET_KEY'
-
+f
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     result = session.get('result', False)
