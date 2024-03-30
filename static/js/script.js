@@ -25,11 +25,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Attach the event listener to picture input
     document.getElementById('picture').addEventListener('change', function(event) {
-        handleFileSelection(event, 'pic-name', 'pic-preview');
+        handleFileSelection(event, 'pic-name', 'main-image');
     });
 
     // Attach the event listener to watermark input
     document.getElementById('watermark').addEventListener('change', function(event) {
-        handleFileSelection(event, 'water-name', 'water-preview'); // Make sure to have a corresponding 'water-preview' ID for your watermark preview image
+        handleFileSelection(event, 'water-name', 'image-watermark-inner'); // Make sure to have a corresponding 'water-preview' ID for your watermark preview image
     });
 });
