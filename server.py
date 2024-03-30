@@ -15,10 +15,19 @@ def upload_file():
     if request.method == 'POST':
         # Check if the post request has the file part
         if 'picture' not in request.files:
-            return 'No file part'
+            return jsonify('No file part')
         picture = request.files['picture']
         watermark = request.files['watermark']
-        position = (0,0)
+        data = session.get('data', {"ERROR":"no data: found"})
+        position = (data['watermark_pos']["x"], data['watermark_pos']["y"])
+        width = data["width_w"][:-2]
+        height = data["height_w"][:-2]
+        print("hekoo")
+        print(height)
+        
+        
+        
+    
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if picture.filename == '':
@@ -34,7 +43,7 @@ def upload_file():
                 picture.save(temp_picture.name)
                 watermark.save(temp_watermark.name)
          
-                add_watermark.get_result(temp_picture.name, temp_watermark.name, position)
+                add_watermark.get_result(temp_picture.name, temp_watermark.name, position, width=int(width), height=int(height))
 
                 # # Clean up the temporary and processed files
                 # os.unlink(temp_picture.name)
@@ -59,6 +68,7 @@ def edit():
         print('helo')
         data = request.get_json()
         print(data)
+        session["data"] = data
         return jsonify(data)
     return render_template('edit.html', data = json.dumps(data))
 

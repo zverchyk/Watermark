@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 
 class Watermark():
     
-    def merge_with_transparency(self,background_image_path, watermark_path, position, **kwargs):
+    def merge_with_transparency(self,background_image_path, watermark_path,position,  **kwargs):
         with Image.open(watermark_path) as img:
             ImageOps.cover(img, (250, 250)).save(watermark_path)
         # Open the background and transparent images
@@ -26,12 +26,12 @@ class Watermark():
         merged_image.paste(background, (0,0))
         # Paste the transparent image onto the merged image at the specified position
         # The transparent image itself is used as the mask to maintain its transparency
-        merged_image.paste(watermark, position, mask=watermark)
+        merged_image.paste(watermark,position, mask=watermark)
 
         return merged_image
     
-    def get_result(self, image, watermark, side):
-        result = self.merge_with_transparency(image, watermark, side, width = None, height = None)
+    def get_result(self, image, watermark, position, width = None, height = None):
+        result = self.merge_with_transparency(image, watermark, position, width = width, height = height)
         result.save('result/result.png', "PNG")
         return 'result/result.png'
 

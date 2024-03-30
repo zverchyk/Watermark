@@ -153,6 +153,11 @@ function makeDraggable(dragTarget, container) {
 });
 
 
+// Scale properties 
+let ScaleObject = {
+    water_width: 0,
+    water_height: 0,
+}
 
 //  MOVE AND SCALE WITH MOUSE
 
@@ -245,44 +250,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const dx = e.clientX - startX;
             const dy = e.clientY - startY;
-            let width = Math.max(10, startWidth - dx);
-            let height = Math.max(10, startHeight - dy);
-            window.width
-            window.heiht
+            
+
             switch(handleId) {
                 case 'scale-top-left':
-                    watermark.style.width = `${width}px`;
-                    watermark.style.height = `${height}px`;
+                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
+                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
                     watermark.style.left = `${startLeft + dx}px`;
                     watermark.style.top = `${startTop + dy}px`;
+                    ScaleObject.water_width = watermark.style.width
+                    ScaleObject.water_height = watermark.style.height
+                    
                     break;
                 case 'scale-top':
-                    watermark.style.height = `${height}px`;
+                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
                     watermark.style.top = `${startTop + dy}px`;
+                    ScaleObject.water_height = watermark.style.height
                     break;
                 case 'scale-top-right':
                     watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
-                    watermark.style.height = `${height}px`;
+                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
                     watermark.style.top = `${startTop + dy}px`;
+                    ScaleObject.water_width = watermark.style.width
+                    ScaleObject.water_height = watermark.style.height
                     break;
                 case 'scale-right':
                     watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
+                    ScaleObject.water_width = watermark.style.width
                     break;
                 case 'scale-bottom-right':
                     watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
                     watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
+                    ScaleObject.water_width = watermark.style.width
+                    ScaleObject.water_height = watermark.style.height
                     break;
                 case 'scale-bottom':
                     watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
+                    ScaleObject.water_height = watermark.style.height
                     break;
                 case 'scale-bottom-left':
-                    watermark.style.width = `${width}px`;
+                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
                     watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
                     watermark.style.left = `${startLeft + dx}px`;
+                    ScaleObject.water_width = watermark.style.width
+                    ScaleObject.water_height = watermark.style.height
                     break;
                 case 'scale-left':
-                    watermark.style.width = `${width}px`;
+                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
                     watermark.style.left = `${startLeft + dx}px`;
+                    ScaleObject.water_width = watermark.style.width
                     break;
             }
             
@@ -321,8 +337,10 @@ document.getElementById('get-position-btn').addEventListener('click', function c
         body: JSON.stringify({
             watermark_pos: position,
             text_pos: text_position,
-            size: scale,
-a
+            width_w: ScaleObject.water_width,
+            height_w: ScaleObject.water_height,
+
+
         })
         
     })
