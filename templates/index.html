@@ -49,7 +49,9 @@
         <div id="image-container" style="position: relative; width: 100%;">
             <img id="main-image" src=""  alt="Main Image">
             <div id="image-watermark" style="position: absolute; top: 0; left:0; opacity: 1; width: 100px; height: 100px;">
-                <img id="image-watermark-inner" src="" style="width: 100%; height: 100%;" alt="Watermark">
+                <img id="image-watermark-inner" src="{{ url_for('static', filename='test_files/black.png') }}" style="width: 100%; height: 100%;" alt="Watermark">
+                <img class="rotation" id="rotation" src="{{ url_for('static', filename='img/rotate.jpg') }}" style="position: absolute; width: 25px; height: 25px; z-index: 5; top: -20px; left: 50%; transform: translate(-50%, -50%);">
+
                 <div id="scaling-frame" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid blue; display: none;">
                 <!-- Scaling handles -->
                 <div class="scale-handle" id="scale-top-left" style="position: absolute; top: -5px; left: -5px; width: 10px; height: 10px; background-color: blue; cursor: nw-resize;"></div>

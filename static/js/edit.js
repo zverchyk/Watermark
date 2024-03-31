@@ -156,9 +156,43 @@ function makeDraggable(dragTarget, container) {
 
 document.addEventListener('DOMContentLoaded', function() {
     const scaleHandles = document.getElementsByClassName('scale-handle');
+    const rotateHandle = document.getElementById("rotation")
     let isResizing = false;
     let isDragging = false;
+    let isRotating = false;
     let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+    // Rotation function
+
+        
+    const calculateRotation = (e) => {
+        const rect = watermark.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        const angleDeg = Math.atan2(mouseY - centerY, mouseX - centerX) * 180 / Math.PI;
+        return angleDeg;
+    };
+    function startRotate(e){
+        isRotating = true;
+        document.addEventListener('mousemove', doRotate);
+        document.addEventListener('mouseup', stopRotate);
+    }
+    function doRotate(e){
+        if(!isRotating) return;
+        const angle = calculateRotation(e);
+        watermark.style.transform = `rotate(${angle}deg)`;
+        console.log(angle)
+        document.addEventListener('mouseup', stopRotate);
+    }
+    function stopRotate(e){
+        isRotating = false;
+        document.addEventListener('mousemove', doRotate);
+        document.addEventListener('mouseup', stopRotate);
+    }
+
+
 
     // Function to initialize dragging
     function startDrag(e) {
@@ -220,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Attach the mousedown event to the watermark for dragging
     watermark.addEventListener('mousedown', startDrag);
-
+    rotateHandle.addEventListener('mousedown', startRotate);
     // Function to initialize resizing
     function initResize(e) {
         // Prevent default actions and stop event propagation
