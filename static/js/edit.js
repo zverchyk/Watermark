@@ -1,19 +1,26 @@
-
 // Function to calculate the position of the watermark relative to the main image
 function getWatermarkPosition(watermark, container) {
     var watermarkRect = watermark.getBoundingClientRect();
     var containerRect = container.getBoundingClientRect();
+
     return {
         x: watermarkRect.left - containerRect.left,
-        y: watermarkRect.top - containerRect.top
+        y: watermarkRect.top - containerRect.top,
+
     };
 }
 
+const watermark = document.getElementById('image-watermark');
+// Scale properties 
+let ScaleObject = {
+    water_width: watermark.style.width,
+    water_height: watermark.style.height,
+}
 
 // MOVE AND SCALE WITH TOUCH
 
 document.addEventListener('DOMContentLoaded', function() {
-    const watermark = document.getElementById('image-watermark');
+    
     const container = document.getElementById('main-image'); // Using document as the container for simplicity, adjust as needed
     
     let initialDistance = null;
@@ -49,25 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add drag functionality
 function makeDraggable(dragTarget, container) {
-    let startX, startY, offsetX, offsetY, isDragging = false;
-
+    let startX, startY, startLeft, startTop, isDragging = false;
+    const rect = dragTarget.getBoundingClientRect();
     function startDrag(e) {
         // Prevent initiating drag if more than one touch is detected or we are scaling
         if (e.touches && e.touches.length > 1) return;
 
-        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-        const rect = dragTarget.getBoundingClientRect();
-
-        // Calculate the offset from the cursor/finger to the top-left corner of the dragTarget
-        startX = clientX;
-        startY = clientY;
-        offsetX = clientX - rect.left;
-        offsetY = clientY - rect.top;
-
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        startLeft = watermark.offsetLeft;
+        startTop = watermark.offsetTop;
+        
         // Attach event listeners for moving and stopping the drag
-        document.addEventListener('mousemove', onDrag, { passive: false });
-        document.addEventListener('mouseup', stopDrag);
         document.addEventListener('touchmove', onDrag, { passive: false });
         document.addEventListener('touchend', stopDrag);
 
@@ -78,25 +78,21 @@ function makeDraggable(dragTarget, container) {
     function onDrag(e) {
         if (!isDragging) return;
 
-        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-
-        // Include page scroll offsets in the calculation for absolute positioning relative to the document
-        const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        dx = e.touches[0].clientX - startX
+        dy = e.touches[0].clientY - startY
 
         // Calculate new position considering the initial offsets
-        let newX = clientX - offsetX + scrollX;
-        let newY = clientY - offsetY + scrollY;
+        let newX = startLeft +dx;
+        let newY = startTop + dy;
 
         // Container (background picture) dimensions and position
         const containerRect = container.getBoundingClientRect();
 
         // Apply constraints: Allow the watermark to slightly go out of the background picture by 30px
-        const minX = containerRect.left + scrollX - 30; // 30px outside to the left
-        const maxX = containerRect.right + scrollX - dragTarget.offsetWidth + 30; // 30px outside to the right
-        const minY = containerRect.top + scrollY - 30; // 30px outside to the top
-        const maxY = containerRect.bottom + scrollY - dragTarget.offsetHeight + 30; // 30px outside to the bottom
+        const minX = - 30; // 30px outside to the left
+        const maxX = containerRect.width  - dragTarget.offsetWidth + 30; // 30px outside to the right
+        const minY = - 30; // 30px outside to the top
+        const maxY = containerRect.height - dragTarget.offsetHeight + 30; // 30px outside to the bottom
 
         // Constrain newX and newY within the min and max values
         newX = Math.min(Math.max(newX, minX), maxX);
@@ -148,21 +144,17 @@ function makeDraggable(dragTarget, container) {
         if (e.touches.length < 2 && initialDistance) {
             scale = parseFloat(watermark.style.transform.slice(6, -1)) || 1;
             initialDistance = null; // Reset initial distance for pinch-to-zoom
+            ScaleObject.water_width = watermark.style.width
+            ScaleObject.water_height = watermark.style.height
         }
     });
 });
 
 
-// Scale properties 
-let ScaleObject = {
-    water_width: 0,
-    water_height: 0,
-}
 
 //  MOVE AND SCALE WITH MOUSE
 
 document.addEventListener('DOMContentLoaded', function() {
-    const watermark = document.getElementById('image-watermark');
     const scaleHandles = document.getElementsByClassName('scale-handle');
     let isResizing = false;
     let isDragging = false;
@@ -178,6 +170,9 @@ document.addEventListener('DOMContentLoaded', function() {
         startY = e.clientY;
         startLeft = watermark.offsetLeft;
         startTop = watermark.offsetTop;
+        // console.log("startLeft", startLeft)
+        // console.log("startTOP", startTop)
+        // console.log("startx: ", startX)
 
         document.addEventListener('mousemove', doDrag);
         document.addEventListener('mouseup', stopDrag);
@@ -194,19 +189,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const containerRect = container.getBoundingClientRect();
     
         // Including window's scroll offsets
-        const scrollX = window.scrollX;
-        const scrollY = window.scrollY;
+        // const scrollX = window.scrollX;
+        // const scrollY = window.scrollY;
     
         // Calculate the new position including the drag distance
         let newX = startLeft + dx;
         let newY = startTop + dy;
     
         // Constrain the new position to allow the watermark to go slightly out of the main container by 30px
-        const minX = containerRect.left + scrollX - 30;
-        const maxX = containerRect.right + scrollX - watermark.offsetWidth + 30;
-        const minY = containerRect.top + scrollY - 30;
-        const maxY = containerRect.bottom + scrollY - watermark.offsetHeight + 30;
-    
+        const minX = -30;
+        const maxX = containerRect.width - watermark.offsetWidth + 30;
+        const minY = -30;
+        const maxY = containerRect.height - watermark.offsetHeight + 30;
+        
         // Apply the constraints to newX and newY
         newX = Math.max(minX, Math.min(newX, maxX));
         newY = Math.max(minY, Math.min(newY, maxY));
@@ -236,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const handleId = e.target.id;
         startX = e.clientX;
         startY = e.clientY;
-        const rect = watermark.getBoundingClientRect();
+        rect = watermark.getBoundingClientRect();
         startWidth = rect.width;
         startHeight = rect.height;
         startLeft = watermark.offsetLeft;
@@ -321,24 +316,23 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('get-position-btn').addEventListener('click', function clickEventHandler() {
     var mainImage = document.getElementById('main-image');
     var imageWatermark = document.getElementById('image-watermark'); 
-    var textWatermark = document.getElementById('text-watermark')// Or textWatermark for the <p> element
+    var mainImageSize = mainImage.getBoundingClientRect();
     var position = getWatermarkPosition(imageWatermark, mainImage);
     position.x = Math.floor(position.x);
     position.y = Math.floor(position.y);
-    var text_position = getWatermarkPosition(textWatermark, mainImage);
-    console.log('Watermark Position:', position);
-    document.getElementById('num').textContent = 'watermark position ' + ' x ' + position.x + ' y ' +position.y;
-    document.getElementById('tnum').textContent = 'text '+ 'x '+ text_position.x + ' y '+ text_position.y
-    fetch('/edit', {
+
+    
+ fetch('/edit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             watermark_pos: position,
-            text_pos: text_position,
-            width_w: ScaleObject.water_width,
-            height_w: ScaleObject.water_height,
+            watermarkWidth: ScaleObject.water_width,
+            watermarkHeight: ScaleObject.water_height,
+            mainImageWidth: mainImageSize.width,
+            mainImageHeight: mainImageSize.height,
 
 
         })

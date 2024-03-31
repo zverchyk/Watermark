@@ -3,21 +3,28 @@ from PIL import Image, ImageOps
 
 class Watermark():
     
-    def merge_with_transparency(self,background_image_path, watermark_path,position,  **kwargs):
+    def merge_with_transparency(self,background_image_path, watermark_path,position,changed_image_height,changed_image_width,  **kwargs):
         with Image.open(watermark_path) as img:
             ImageOps.cover(img, (250, 250)).save(watermark_path)
         # Open the background and transparent images
         background = Image.open(background_image_path).convert("RGBA")
         watermark = Image.open(watermark_path).convert("RGBA")
-    
+        # discovering proportions 
+        proportionY = changed_image_height*100/ background.height
+        proportionX = changed_image_width*100/ background.width
+        #changing position according to proportions 
+        calculated = (int(position[0]*100/proportionY),int(position[1]*100/proportionY))
+        position = calculated
+        
         # Create a new blank image with the same size as the background
         merged_image = Image.new("RGBA", background.size)
         try:
             
             watermark_width = kwargs.get('width', watermark.width)
             watermark_height= kwargs.get('height', watermark.width)
-            
-            resized_watermark = watermark.resize((watermark_width, watermark_height))
+            #changing size according to proportions 
+            size = (int(watermark_width*100/proportionX), int(watermark_height*100/proportionX))
+            resized_watermark = watermark.resize(size)
         except TypeError:
             pass
         else:
@@ -30,9 +37,9 @@ class Watermark():
 
         return merged_image
     
-    def get_result(self, image, watermark, position, width = None, height = None):
-        result = self.merge_with_transparency(image, watermark, position, width = width, height = height)
-        result.save('result/result.png', "PNG")
+    def get_result(self, image, watermark, position,changed_image_height,changed_image_width, width = None, height = None ):
+        result = self.merge_with_transparency(image, watermark, position,changed_image_height,changed_image_width, width = width, height = height)
+        result.save('result/resultChanged.png', "PNG")
         return 'result/result.png'
 
 

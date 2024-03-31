@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Attach the event listener to watermark input
     document.getElementById('watermark').addEventListener('change', function(event) {
+        const scaleFrame = document.getElementById("scaling-frame")
+        scaleFrame.style.display = 'block';
         handleFileSelection(event, 'water-name', 'image-watermark-inner'); // Make sure to have a corresponding 'water-preview' ID for your watermark preview image
     });
 });

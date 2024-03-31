@@ -2,15 +2,13 @@
     margin-top: 20px;
     position: relative;
     width: 100%;
-    height: auto;
+
 }
 
 #image-container {
     background: #eaeaea;
     border: 1px solid #ccc;
-    margin-top: 20px;
-    position: relative;
-    width: 100%;
+
 }
 
 .scale-handle {

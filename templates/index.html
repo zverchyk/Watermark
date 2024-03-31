@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/edit.css">
-    <title>Document</title>
+    <title>Stampex</title>
 </head>
 
 <body>
@@ -31,6 +31,7 @@
             <br>
             <button type="submit">Upload</button>
         </form>
+        <button id="get-position-btn" >Get Watermark Position</button>
         {%if result%}
         <a href="{{url_for('download_image')}}" class="button">download_image</a>
         {%endif%}
@@ -40,16 +41,16 @@
     
     </div>
 </div>
+<div class="noise">
+    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis ut modi qui ipsum unde iusto eligendi aliquid voluptatibus iure aspernatur. Quo, optio neque. Pariatur odio iste enim, eaque natus autem quos cumque aliquid exercitationem, ipsam optio reiciendis alias quis maxime tempora perferendis eius, perspiciatis possimus error nemo expedita? Eos exercitationem modi adipisci ipsa distinctio iste libero laborum sint alias soluta, repudiandae perferendis fugiat perspiciatis illum, repellat porro, et harum dolore quas voluptates. Aperiam quod, eaque enim consequatur, impedit asperiores temporibus, tenetur distinctio corporis iure sint nobis illo ipsa doloremque quas recusandae officia aliquam voluptate ullam nesciunt aspernatur natus laborum? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Earum excepturi asperiores adipisci harum, suscipit officia dignissimos, sunt accusamus molestiae voluptatibus maiores similique aliquid fugit illo modi nostrum neque eveniet tempora animi laboriosam, dolorum voluptas totam optio! Maiores dignissimos modi est minima illum nisi non sit, eaque, commodi sunt assumenda rerum voluptatibus nobis vel sint ad voluptate quibusdam minus quisquam, autem ipsa quo. Corporis deserunt explicabo cupiditate ullam! Assumenda fugiat exercitationem perspiciatis. Dicta cupiditate commodi doloremque deserunt facere eaque pariatur officiis nemo quia fuga, non illo aliquam, quo, amet obcaecati quos. Fuga, aliquid odio. Sint, maxime veniam quas eligendi eaque qui. Aperiam autem repellendus quasi repellat dicta expedita cumque odit id quam ullam excepturi atque facilis aspernatur dolor nulla vero debitis accusamus veritatis provident eum libero rerum, non tenetur. Officiis quod quasi at voluptatum pariatur quos ratione voluptatem corporis dolor dolorum ad voluptate eligendi doloribus ipsum, ut vero harum quia. Fugit, id! Fugiat, placeat expedita delectus facilis, explicabo dolor maiores doloremque excepturi accusamus odio commodi sunt, at ab eaque distinctio perspiciatis. Ipsa, eius! Accusantium, nam pariatur. Vero, eius. Expedita fuga provident illum temporibus ipsa pariatur officiis tempore, aliquid accusamus cum obcaecati voluptatibus cupiditate, dignissimos magni, molestiae eveniet delectus dolores inventore non!
+</div>
 
     <div class="edit">
         <div id="image-container" style="position: relative; width: 100%;">
-            <img id="main-image" src="" alt="Main Image">
+            <img id="main-image" src=""  alt="Main Image">
             <div id="image-watermark" style="position: absolute; top: 0; left:0; opacity: 1; width: 100px; height: 100px;">
                 <img id="image-watermark-inner" src="" style="width: 100%; height: 100%;" alt="Watermark">
-            
-                <!-- <div id="scale-handle" style="position: absolute; bottom: 0; right: 0; width: 100%; height: 100%; background: transparent; cursor: nwse-resize; border-width: 50px; border-color: blue;"></div> -->
-                  <!-- The scaling frame -->
-                <div id="scaling-frame" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid blue;">
+                <div id="scaling-frame" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; border: 2px solid blue; display: none;">
                 <!-- Scaling handles -->
                 <div class="scale-handle" id="scale-top-left" style="position: absolute; top: -5px; left: -5px; width: 10px; height: 10px; background-color: blue; cursor: nw-resize;"></div>
                 <div class="scale-handle" id="scale-top-right" style="position: absolute; top: -5px; right: -5px; width: 10px; height: 10px; background-color: blue; cursor: ne-resize;"></div>
@@ -67,7 +68,6 @@
             <p id="text-watermark" style="color:green; font-size: 25px;"></p>
     
         </div>
-        <button id="get-position-btn" >Get Watermark Position</button>
     </div>
 </div>
     <script src="/static/js/edit.js"></script>
