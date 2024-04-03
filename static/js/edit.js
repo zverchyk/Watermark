@@ -1,3 +1,5 @@
+
+console.log(window.scrollY)
 // Function to calculate the position of the watermark relative to the main image
 function getWatermarkPosition(watermark, container) {
     var watermarkRect = watermark.getBoundingClientRect();
@@ -12,10 +14,246 @@ function getWatermarkPosition(watermark, container) {
 
 const watermark = document.getElementById('image-watermark');
 // Scale properties 
-let ScaleObject = {
+let WatermarkObject = {
     water_width: watermark.style.width,
     water_height: watermark.style.height,
+    water_rotate: 90
 }
+
+
+
+
+
+//  MOVE AND SCALE WITH MOUSE
+
+document.addEventListener('DOMContentLoaded', function() {
+    const scaleHandles = document.getElementsByClassName('scale-handle');
+    const rotateHandle = document.getElementById("rotation")
+    let isResizing = false;
+    let isDragging = false;
+    let isRotating = false;
+    let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+
+    // Rotation function
+
+        
+
+
+    let startAngle = 0;
+    let initialRotation = 0;
+
+  const calculateRotation = (e) => {
+    const rect = watermark.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    const radians = Math.atan2(mouseY - centerY, mouseX - centerX);
+    const degrees = radians * (180 / Math.PI);
+    return degrees;
+  };
+
+  rotateHandle.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    isRotating = true;
+    isDragging = false;
+    watermark.style.transformOrigin = 'center'
+    startAngle = calculateRotation(e) - initialRotation;
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (isRotating) {
+        isDragging = false;
+      const angle = calculateRotation(e) - startAngle;
+      watermark.style.transform = `rotate(${angle}deg)`;
+      initialRotation = angle
+      WatermarkObject.water_rotate = angle
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isRotating) {
+      isRotating = false;
+   }
+  });
+
+
+    // Function to initialize dragging
+    function startDrag(e) {
+        // Prevent interaction if resizing is active
+        if (isResizing) return;
+
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startLeft = watermark.offsetLeft;
+        startTop = watermark.offsetTop;
+        // console.log("startLeft", startLeft)
+        // console.log("startTOP", startTop)
+        // console.log("startx: ", startX)
+
+        document.addEventListener('mousemove', doDrag);
+        document.addEventListener('mouseup', stopDrag);
+    }
+
+    // Function to perform dragging
+    function doDrag(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+    
+        // Assuming 'container' is already defined and accessible in your scope
+        const container = document.getElementById('image-container');
+        const containerRect = container.getBoundingClientRect();
+    
+        // Including window's scroll offsets
+        // const scrollX = window.scrollX;
+        // const scrollY = window.scrollY;
+    
+        // Calculate the new position including the drag distance
+        let newX = startLeft + dx;
+        let newY = startTop + dy;
+    
+        // Constrain the new position to allow the watermark to go slightly out of the main container by 30px
+        const minX = -30;
+        const maxX = containerRect.width - watermark.offsetWidth + 30;
+        const minY = -30;
+        const maxY = containerRect.height - watermark.offsetHeight + 30;
+        
+        // Apply the constraints to newX and newY
+        newX = Math.max(minX, Math.min(newX, maxX));
+        newY = Math.max(minY, Math.min(newY, maxY));
+    
+        // Update the watermark's position with the constrained values
+        watermark.style.left = `${newX}px`;
+        watermark.style.top = `${newY}px`;
+    }
+
+    // Function to stop dragging
+    function stopDrag() {
+        isDragging = false;
+        document.removeEventListener('mousemove', doDrag);
+        document.removeEventListener('mouseup', stopDrag);
+    }
+
+    // Attach the mousedown event to the watermark for dragging
+    watermark.addEventListener('mousedown', startDrag);
+    // rotateHandle.addEventListener('mousedown', startRotate);
+    // Function to initialize resizing
+    function initResize(e) {
+        // Prevent default actions and stop event propagation
+        e.preventDefault();
+        e.stopPropagation();
+
+        isResizing = true;
+        const handleId = e.target.id;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = watermark.getBoundingClientRect();
+        startWidth = rect.width;
+        startHeight = rect.height;
+
+        // position according to parent element
+        startLeft = watermark.offsetLeft;
+        startTop = watermark.offsetTop;
+
+        // -----------NEW METHOD-------------
+        // px from the top of the window to the center of the element 
+        const newStartTop = e.clientY- (window.scrollY + (watermark.getBoundingClientRect().height/2));
+
+        // add to switch 
+        // const newStartHeight = 2*(newStartTop + window.scrollY - e.clientY);
+        
+
+
+        document.addEventListener('mousemove', resizeElement);
+        document.addEventListener('mouseup', stopResize);
+
+        function resizeElement(e) {
+            if (!isResizing) return;
+            
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            // -------NEW METHOD------
+            const newStartHeight = 2*(newStartTop + window.scrollY - e.clientY);
+            
+
+            switch(handleId) {
+                
+                case 'scale-top-left':
+
+                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
+                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
+                    watermark.style.left = `${startLeft + dx}px`;
+                    watermark.style.top = `${startTop + dy}px`;
+                    WatermarkObject.water_width = watermark.style.width
+                    WatermarkObject.water_height = watermark.style.height
+                    
+                    break;
+                case 'scale-top':
+                    watermark.style.height = `${newStartHeight}px`;
+
+                    watermark.style.top = `${e.clientY- (window.scrollY + (watermark.getBoundingClientRect().height/2))}px`;
+                    // watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
+                    // watermark.style.top = `${startTop + dy}px`;
+
+                    WatermarkObject.water_height = watermark.style.height
+                    break;
+                case 'scale-top-right':
+
+                    watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
+                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
+                    watermark.style.transformOrigin = 'center'
+                    watermark.style.top = `${startTop + dy}px`;
+
+                    WatermarkObject.water_width = watermark.style.width
+                    WatermarkObject.water_height = watermark.style.height
+                    break;
+                case 'scale-right':
+                    watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
+                    WatermarkObject.water_width = watermark.style.width
+                    break;
+                case 'scale-bottom-right':
+                    watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
+                    watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
+                    WatermarkObject.water_width = watermark.style.width
+                    WatermarkObject.water_height = watermark.style.height
+                    break;
+                case 'scale-bottom':
+                    watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
+                    WatermarkObject.water_height = watermark.style.height
+                    break;
+                case 'scale-bottom-left':
+                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
+                    watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
+                    watermark.style.left = `${startLeft + dx}px`;
+                    WatermarkObject.water_width = watermark.style.width
+                    WatermarkObject.water_height = watermark.style.height
+                    break;
+                case 'scale-left':
+                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
+                    watermark.style.left = `${startLeft + dx}px`;
+                    WatermarkObject.water_width = watermark.style.width
+                    break;
+            }
+            
+        }
+
+        function stopResize() {
+            isResizing = false;
+            document.removeEventListener('mousemove', resizeElement);
+            document.removeEventListener('mouseup', stopResize);
+        }
+    }
+
+    // Attach mousedown event to all scale handles for resizing
+    Array.from(scaleHandles).forEach(handle => {
+        handle.addEventListener('mousedown', initResize);
+        console.log("touched")
+    });
+});
 
 // MOVE AND SCALE WITH TOUCH
 
@@ -62,8 +300,8 @@ function makeDraggable(dragTarget, container) {
         // Prevent initiating drag if more than one touch is detected or we are scaling
         if (e.touches && e.touches.length > 1) return;
 
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
+        startX = e.touches[0].pageX;
+        startY = e.touches[0].pageY;
         startLeft = watermark.offsetLeft;
         startTop = watermark.offsetTop;
         
@@ -144,205 +382,9 @@ function makeDraggable(dragTarget, container) {
         if (e.touches.length < 2 && initialDistance) {
             scale = parseFloat(watermark.style.transform.slice(6, -1)) || 1;
             initialDistance = null; // Reset initial distance for pinch-to-zoom
-            ScaleObject.water_width = watermark.style.width
-            ScaleObject.water_height = watermark.style.height
+            WatermarkObject.water_width = watermark.style.width
+            WatermarkObject.water_height = watermark.style.height
         }
-    });
-});
-
-
-
-//  MOVE AND SCALE WITH MOUSE
-
-document.addEventListener('DOMContentLoaded', function() {
-    const scaleHandles = document.getElementsByClassName('scale-handle');
-    const rotateHandle = document.getElementById("rotation")
-    let isResizing = false;
-    let isDragging = false;
-    let isRotating = false;
-    let startX, startY, startWidth, startHeight, startLeft, startTop;
-
-    // Rotation function
-
-        
-    const calculateRotation = (e) => {
-        const rect = watermark.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-        const angleDeg = Math.atan2(mouseY - centerY, mouseX - centerX) * 180 / Math.PI;
-        return angleDeg;
-    };
-    function startRotate(e){
-        isRotating = true;
-        document.addEventListener('mousemove', doRotate);
-        document.addEventListener('mouseup', stopRotate);
-    }
-    function doRotate(e){
-        if(!isRotating) return;
-        const angle = calculateRotation(e);
-        watermark.style.transform = `rotate(${angle}deg)`;
-        console.log(angle)
-        document.addEventListener('mouseup', stopRotate);
-    }
-    function stopRotate(e){
-        isRotating = false;
-        document.addEventListener('mousemove', doRotate);
-        document.addEventListener('mouseup', stopRotate);
-    }
-
-
-
-    // Function to initialize dragging
-    function startDrag(e) {
-        // Prevent interaction if resizing is active
-        if (isResizing) return;
-
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        startLeft = watermark.offsetLeft;
-        startTop = watermark.offsetTop;
-        // console.log("startLeft", startLeft)
-        // console.log("startTOP", startTop)
-        // console.log("startx: ", startX)
-
-        document.addEventListener('mousemove', doDrag);
-        document.addEventListener('mouseup', stopDrag);
-    }
-
-    // Function to perform dragging
-    function doDrag(e) {
-        if (!isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-    
-        // Assuming 'container' is already defined and accessible in your scope
-        const container = document.getElementById('image-container');
-        const containerRect = container.getBoundingClientRect();
-    
-        // Including window's scroll offsets
-        // const scrollX = window.scrollX;
-        // const scrollY = window.scrollY;
-    
-        // Calculate the new position including the drag distance
-        let newX = startLeft + dx;
-        let newY = startTop + dy;
-    
-        // Constrain the new position to allow the watermark to go slightly out of the main container by 30px
-        const minX = -30;
-        const maxX = containerRect.width - watermark.offsetWidth + 30;
-        const minY = -30;
-        const maxY = containerRect.height - watermark.offsetHeight + 30;
-        
-        // Apply the constraints to newX and newY
-        newX = Math.max(minX, Math.min(newX, maxX));
-        newY = Math.max(minY, Math.min(newY, maxY));
-    
-        // Update the watermark's position with the constrained values
-        watermark.style.left = `${newX}px`;
-        watermark.style.top = `${newY}px`;
-    }
-
-    // Function to stop dragging
-    function stopDrag() {
-        isDragging = false;
-        document.removeEventListener('mousemove', doDrag);
-        document.removeEventListener('mouseup', stopDrag);
-    }
-
-    // Attach the mousedown event to the watermark for dragging
-    watermark.addEventListener('mousedown', startDrag);
-    rotateHandle.addEventListener('mousedown', startRotate);
-    // Function to initialize resizing
-    function initResize(e) {
-        // Prevent default actions and stop event propagation
-        e.preventDefault();
-        e.stopPropagation();
-
-        isResizing = true;
-        const handleId = e.target.id;
-        startX = e.clientX;
-        startY = e.clientY;
-        rect = watermark.getBoundingClientRect();
-        startWidth = rect.width;
-        startHeight = rect.height;
-        startLeft = watermark.offsetLeft;
-        startTop = watermark.offsetTop;
-
-        document.addEventListener('mousemove', resizeElement);
-        document.addEventListener('mouseup', stopResize);
-
-        function resizeElement(e) {
-            if (!isResizing) return;
-
-            const dx = e.clientX - startX;
-            const dy = e.clientY - startY;
-            
-
-            switch(handleId) {
-                case 'scale-top-left':
-                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
-                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
-                    watermark.style.left = `${startLeft + dx}px`;
-                    watermark.style.top = `${startTop + dy}px`;
-                    ScaleObject.water_width = watermark.style.width
-                    ScaleObject.water_height = watermark.style.height
-                    
-                    break;
-                case 'scale-top':
-                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
-                    watermark.style.top = `${startTop + dy}px`;
-                    ScaleObject.water_height = watermark.style.height
-                    break;
-                case 'scale-top-right':
-                    watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
-                    watermark.style.height = `${Math.max(10, startHeight - dy)}px`;
-                    watermark.style.top = `${startTop + dy}px`;
-                    ScaleObject.water_width = watermark.style.width
-                    ScaleObject.water_height = watermark.style.height
-                    break;
-                case 'scale-right':
-                    watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
-                    ScaleObject.water_width = watermark.style.width
-                    break;
-                case 'scale-bottom-right':
-                    watermark.style.width = `${Math.max(10, startWidth + dx)}px`;
-                    watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
-                    ScaleObject.water_width = watermark.style.width
-                    ScaleObject.water_height = watermark.style.height
-                    break;
-                case 'scale-bottom':
-                    watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
-                    ScaleObject.water_height = watermark.style.height
-                    break;
-                case 'scale-bottom-left':
-                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
-                    watermark.style.height = `${Math.max(10, startHeight + dy)}px`;
-                    watermark.style.left = `${startLeft + dx}px`;
-                    ScaleObject.water_width = watermark.style.width
-                    ScaleObject.water_height = watermark.style.height
-                    break;
-                case 'scale-left':
-                    watermark.style.width = `${Math.max(10, startWidth - dx)}px`;
-                    watermark.style.left = `${startLeft + dx}px`;
-                    ScaleObject.water_width = watermark.style.width
-                    break;
-            }
-            
-        }
-
-        function stopResize() {
-            isResizing = false;
-            document.removeEventListener('mousemove', resizeElement);
-            document.removeEventListener('mouseup', stopResize);
-        }
-    }
-
-    // Attach mousedown event to all scale handles for resizing
-    Array.from(scaleHandles).forEach(handle => {
-        handle.addEventListener('mousedown', initResize);
     });
 });
 
@@ -354,7 +396,7 @@ document.getElementById('get-position-btn').addEventListener('click', function c
     var position = getWatermarkPosition(imageWatermark, mainImage);
     position.x = Math.floor(position.x);
     position.y = Math.floor(position.y);
-
+    console.log(window.scrollY)
     
  fetch('/edit', {
         method: 'POST',
@@ -363,10 +405,12 @@ document.getElementById('get-position-btn').addEventListener('click', function c
         },
         body: JSON.stringify({
             watermark_pos: position,
-            watermarkWidth: ScaleObject.water_width,
-            watermarkHeight: ScaleObject.water_height,
+            watermarkWidth: WatermarkObject.water_width,
+            watermarkHeight: WatermarkObject.water_height,
+            watermarkRotate: WatermarkObject.water_rotate,
             mainImageWidth: mainImageSize.width,
             mainImageHeight: mainImageSize.height,
+
 
 
         })

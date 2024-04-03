@@ -49,3 +49,9 @@ h2 {
 #pic-preview, #water-preview {
     margin-top: 15px;
 }
+
+.unselectable {
+    user-select: none;
+    cursor: default;
+  }
+  

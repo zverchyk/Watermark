@@ -1,3 +1,6 @@
 __pycache__
 kernel
 test
+static\js\node_modules
+static\js\package-lock.json
+static\js\package.json

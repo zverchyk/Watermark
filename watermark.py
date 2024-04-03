@@ -18,6 +18,12 @@ class Watermark():
         
         # Create a new blank image with the same size as the background
         merged_image = Image.new("RGBA", background.size)
+        try: 
+            watermark_rotate =kwargs.get('rotate', 90)
+        except TypeError:
+            pass
+        else:
+            watermark.rotate(watermark_rotate)
         try:
             
             watermark_width = kwargs.get('width', watermark.width)
@@ -37,8 +43,8 @@ class Watermark():
 
         return merged_image
     
-    def get_result(self, image, watermark, position,changed_image_height,changed_image_width, width = None, height = None ):
-        result = self.merge_with_transparency(image, watermark, position,changed_image_height,changed_image_width, width = width, height = height)
+    def get_result(self, image, watermark, position,changed_image_height,changed_image_width,rotate =None, width = None, height = None ):
+        result = self.merge_with_transparency(image, watermark, position,changed_image_height,changed_image_width,rotate = rotate, width = width, height = height)
         result.save('result/resultChanged.png', "PNG")
         return 'result/result.png'
 

@@ -22,7 +22,7 @@ def upload_file():
         position = [data['watermark_pos']["x"], data['watermark_pos']["y"]]
         width = data["watermarkWidth"][:-2]
         height = data["watermarkHeight"][:-2]
-        
+        rotate = data["watermarkRotate"]
         changed_image_width = int(data['mainImageWidth'])
         changed_image_height = int(data['mainImageHeight'])
         
@@ -46,7 +46,7 @@ def upload_file():
                 picture.save(temp_picture.name)
                 watermark.save(temp_watermark.name)
          
-                add_watermark.get_result(temp_picture.name, temp_watermark.name, position, width=int(width), height=int(height), changed_image_width=changed_image_width, changed_image_height= changed_image_height)
+                add_watermark.get_result(temp_picture.name, temp_watermark.name, position, width=int(width), height=int(height), changed_image_width=changed_image_width, changed_image_height= changed_image_height, rotate=rotate)
 
                 # # Clean up the temporary and processed files
                 # os.unlink(temp_picture.name)
